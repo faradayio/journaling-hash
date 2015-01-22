@@ -1,0 +1,29 @@
+{
+  "name": "journaling-hash",
+  "version": "0.0.1",
+  "description": "Immutable hash that can back itself up to a file and rebuild itself",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/faradayio/journaling-hash.git"
+  },
+  "maintainers": [
+    {
+      "name": "Tristan Davies",
+      "email": "npm@tristan.io"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/faradayio/journaling-hash/issues"
+  },
+  "homepage": "https://github.com/faradayio/journaling-hash",
+  "dependencies": {
+    "bluebird": "^2.8.2",
+    "immutable-hash": "^0.1.6",
+    "through2": "^0.6.3"
+  }
+}

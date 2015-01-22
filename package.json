@@ -1,6 +1,6 @@
 {
   "name": "journaling-hash",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Immutable hash that can back itself up to a file and rebuild itself",
   "main": "index.js",
   "scripts": {

@@ -3,40 +3,10 @@ var through2 = require('through2');
 var Promise = require('bluebird');
 var fs = require('fs');
 
-var lineReader = function(){
-  var buffer = '';
-  return through2(function(chunk, enc, cb){
-    buffer += chunk.toString();
-
-    var lines = buffer.split('\n');
-    buffer = lines.pop();
-
-    var self = this;
-    lines.forEach(function(line){
-      self.push(line);
-    });
-
-    cb();
-  }, function(cb){
-    this.push(buffer);
-    cb();
-  });
-};
-var JSONReader = function(){
-  return through2.obj(function(chunk, enc, cb){
-    chunk = chunk.toString();
-    var err = null;
-
-    try {
-      chunk = JSON.parse(chunk);
-    } catch (error) {
-      err = error;
-      chunk = null;
-    }
-
-    cb(err, chunk);
-  });
-};
+var lineReader = require('through2-linereader');
+var lineWriter = require('through2-linewriter');
+var JSONReader = require('through2-jsonreader');
+var JSONWriter = require('through2-jsonwriter');
 
 var readJournal = function(journalPath, callback){
 
@@ -46,7 +16,7 @@ var readJournal = function(journalPath, callback){
     .on('error', function(err){
       callback(err, hash);
     })
-    .pipe(lineReader())
+    .pipe(lineReader(true))
     .pipe(JSONReader())
     .on('error', function(err){
       callback(err, hash);
@@ -70,13 +40,16 @@ var JournaledHash = function(journalPath, callback){
     var hasData = !!Object.keys(hash.toJSON()).length;
     var newFile = (err || !hasData);
 
-    self.journalWriteStream = fs.createWriteStream(self.journalPath, {
-      flags: newFile ? 'w' : 'a',
-      encoding: 'utf8'
-    });
+    self.journalWriteStream = JSONWriter();
+    self.journalWriteStream
+      .pipe(lineWriter())
+      .pipe(fs.createWriteStream(self.journalPath, {
+        flags: newFile ? 'w' : 'a',
+        encoding: 'utf8'
+      }));
 
     if (newFile && hasData) {
-      self.journalWriteStream.write(JSON.stringify(hash.toJSON())+'\n', 'utf8', function(){
+      self.journalWriteStream.write(hash.toJSON(), function(){
         callback(self);
       });
     } else {
@@ -100,7 +73,7 @@ JournaledHash.prototype.update = function(diff){
 
     var self = this;
     promise = new Promise(function(resolve){
-      self.journalWriteStream.write(JSON.stringify(diff)+'\n', 'utf8', resolve);
+      self.journalWriteStream.write(diff, resolve);
     });
   } else {
     promise = Promise.resolve();

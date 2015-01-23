@@ -1,6 +1,6 @@
 {
   "name": "journaling-hash",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Immutable hash that can back itself up to a file and rebuild itself",
   "main": "index.js",
   "scripts": {
@@ -24,6 +24,10 @@
   "dependencies": {
     "bluebird": "^2.8.2",
     "immutable-hash": "^0.1.6",
-    "through2": "^0.6.3"
+    "through2": "^0.6.3",
+    "through2-jsonreader": "0.0.1",
+    "through2-jsonwriter": "0.0.1",
+    "through2-linereader": "0.0.1",
+    "through2-linewriter": "0.0.1"
   }
 }

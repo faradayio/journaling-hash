@@ -40,13 +40,22 @@ var JournaledHash = function(journalPath, callback){
     var hasData = !!Object.keys(hash.toJSON()).length;
     var newFile = (err || !hasData);
 
+    var writeStream = fs.createWriteStream(self.journalPath, {
+      flags: newFile ? 'w' : 'a',
+      encoding: 'utf8'
+    });
+
+    if (!newFile) {
+      //produces extra newlines in journal, which are ignored
+      //handles edge case where a newline is missing from the end of the file
+      //would happen if a write only made it half-way through
+      writeStream.write('\n');
+    }
+
     self.journalWriteStream = JSONWriter();
     self.journalWriteStream
       .pipe(lineWriter())
-      .pipe(fs.createWriteStream(self.journalPath, {
-        flags: newFile ? 'w' : 'a',
-        encoding: 'utf8'
-      }));
+      .pipe(writeStream);
 
     if (newFile && hasData) {
       self.journalWriteStream.write(hash.toJSON(), function(){

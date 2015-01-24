@@ -87,4 +87,4 @@ In order to make changes to the hash, you must use the `update` function which i
 
 `hash.patch(...)` will return a new immutable hash.
 
-`hash.update(...)` will call `hash.patch` and use the result to replace the internally stored hash, returning a promise.
+`hash.update(...)` will call `hash.patch` and use the result to replace the internally stored hash, returning a promise that will resolve once the change has been written to the journal.
